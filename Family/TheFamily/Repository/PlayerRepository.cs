@@ -22,7 +22,7 @@ namespace TheFamily.Repository
 
         public async Task<Player> DeletePlayer(int id)
         {
-            var result = await _context.player.FirstOrDefault(x => x.Id == id);
+            var result = await _context.player.FirstOrDefaultAsync(x => x.Id == id);
 
             if(result != null)
             {

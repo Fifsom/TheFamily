@@ -45,5 +45,37 @@ namespace TheFamily.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, $"player with id {id} not found.");
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeletePlayer(int id)
+        {
+            try
+            {
+                return Ok(await _playerRepository.DeletePlayer(id));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, $"No player with id{id} was found.");
+                
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreatePlayer(Player player)
+        {
+            try
+            {
+                if(player == null)
+                {
+                    return BadRequest();
+                }
+                var newPlayer = await _playerRepository.CreatePlayer(player);
+                return CreatedAtAction(nameof(GetPlayer), new { newPlayer = player.Id, Controller = "players" }, newPlayer);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Creation Error");
+            }
+        }
     }
 }
