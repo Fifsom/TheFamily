@@ -44,9 +44,15 @@ namespace TheFamily.Repository
             return await _context.player.ToListAsync();
         }
 
-        public Task<Player> GetRandomPlayer()
+        public async Task<Player> GetRandomPlayer()
         {
-            throw new NotImplementedException();
+            Player randomPlayer = new();
+            var random = new Random();
+            var availablePlayers = await _context.player.ToListAsync();
+            int index = random.Next(availablePlayers.Count);
+            randomPlayer = availablePlayers[index];
+
+            return randomPlayer;
         }
 
         public Task<IEnumerable<Player>> GetTop3Players()

@@ -31,7 +31,7 @@ namespace TheFamily.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name="getplayer")]
         public async Task<ActionResult<Player>> GetPlayer(int id)
         {
             try
@@ -61,20 +61,35 @@ namespace TheFamily.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreatePlayer(Player player)
+        public async Task<ActionResult> CreatePlayer(Player spelare)
         {
             try
             {
-                if(player == null)
+                if(spelare == null)
                 {
                     return BadRequest();
                 }
-                var newPlayer = await _playerRepository.CreatePlayer(player);
-                return CreatedAtAction(nameof(GetPlayer), new { newPlayer = player.Id, Controller = "players" }, newPlayer);
+                var newPlayer = await _playerRepository.CreatePlayer(spelare);
+                return CreatedAtRoute("getplayer", new {id = spelare.Id}, spelare);
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Creation Error");
+            }
+        }
+
+        [HttpGet("Random")]
+        public async Task<ActionResult<Player>> GetRandomPlayer()
+        {
+            try
+            {
+                var result = await _playerRepository.GetRandomPlayer();
+                if(result == null) return NotFound();
+                return result;
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, "No players found in the database.");
             }
         }
     }
