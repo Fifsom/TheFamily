@@ -17,7 +17,7 @@ namespace TheFamily.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Player>>> GetPlayer()
+        public async Task<ActionResult<IEnumerable<Player>>> GetPlayers()
         {
             try
             {
@@ -31,13 +31,13 @@ namespace TheFamily.Controllers
             }
         }
 
-        [HttpGet("{id}", Name="getplayer")]
+        [HttpGet("{id}", Name = "getplayer")]
         public async Task<ActionResult<Player>> GetPlayer(int id)
         {
             try
             {
                 var result = await _playerRepository.GetOnePlayer(id);
-                if(result == null) return NotFound();
+                if (result == null) return NotFound();
                 return result;
             }
             catch (Exception)
@@ -56,7 +56,7 @@ namespace TheFamily.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status404NotFound, $"No player with id{id} was found.");
-                
+
             }
         }
 
@@ -65,12 +65,12 @@ namespace TheFamily.Controllers
         {
             try
             {
-                if(spelare == null)
+                if (spelare == null)
                 {
                     return BadRequest();
                 }
                 var newPlayer = await _playerRepository.CreatePlayer(spelare);
-                return CreatedAtRoute("getplayer", new {id = spelare.Id}, spelare);
+                return CreatedAtRoute("getplayer", new { id = spelare.Id }, spelare);
             }
             catch (Exception)
             {
@@ -84,12 +84,45 @@ namespace TheFamily.Controllers
             try
             {
                 var result = await _playerRepository.GetRandomPlayer();
-                if(result == null) return NotFound();
+                if (result == null) return NotFound();
                 return result;
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status404NotFound, "No players found in the database.");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Player>> UpdatePlayer(Player spelare, int id)
+        {
+            try
+            {
+                var playertoupdate = await _playerRepository.GetOnePlayer(id);
+                if (playertoupdate.Id == null)
+                {
+                    return NotFound($"no player with id{id} exist in the database.");
+                }
+                return await _playerRepository.UpdatePlayer(spelare);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error updating data");
+            }
+        }
+
+        [HttpGet("wins")]
+        public async Task<ActionResult<Player>> Gettop3Player()
+        {
+            try
+            {
+                return Ok(await _playerRepository.GetTop3Players());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status404NotFound,
+                    "no players were found in");
             }
         }
     }

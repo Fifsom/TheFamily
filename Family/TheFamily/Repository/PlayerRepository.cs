@@ -55,14 +55,30 @@ namespace TheFamily.Repository
             return randomPlayer;
         }
 
-        public Task<IEnumerable<Player>> GetTop3Players()
+        public async Task<IEnumerable<Player>> GetTop3Players()
         {
-            throw new NotImplementedException();
+            var playerList = await _context.player.ToListAsync();
+            var top3players = playerList.OrderByDescending(x => x.Wins).Take(3).ToList();
+
+            return top3players;
         }
 
-        public Task<Player> UpdatePlayer(Player spelare)
+        public async Task<Player> UpdatePlayer(Player spelare)
         {
-            throw new NotImplementedException();
+            var result = await _context.player.FirstOrDefaultAsync(x => x.Id == spelare.Id);
+            if( result != null)
+            {
+                result.Name = spelare.Name;
+                result.FavFood = spelare.FavFood;
+                result.ImgName = spelare.ImgName;
+                result.Wins = spelare.Wins;
+                result.Loses = spelare.Loses;
+
+                _context.SaveChangesAsync();
+                return result;                
+            }
+            return null;
+            
         }
     }
 }
