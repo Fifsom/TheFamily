@@ -10,7 +10,7 @@ namespace TheFamily.Entities
         public string Name { get; set; }
         public string FavFood { get; set; }
         public string ImgName { get; set; }
-        public int Wins { get; set; }
-        public int Loses { get; set; }
+        public int? Wins { get; set; }
+        public int? Loses { get; set; }
     }
 }
